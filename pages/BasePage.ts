@@ -2,8 +2,15 @@ import { expect, Locator, Page } from '@playwright/test';
 
 export abstract class BasePage{
     protected readonly page: Page;
+    
     constructor(page: Page){
         this.page = page;
+    }
+
+    public async waitToLoad(){
+        await this.page.waitForLoadState('domcontentloaded'); // DOM parsed
+        await this.page.waitForLoadState('networkidle');
+        await this.page.waitForLoadState('load');
     }
 
     protected async goto(path: string){
