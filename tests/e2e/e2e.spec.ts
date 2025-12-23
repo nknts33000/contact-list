@@ -1,14 +1,17 @@
-import { constrainedMemory } from 'node:process';
 import { generatePassword, generateUsername } from '../../factory/userFactory';
 import { test } from '../../fixtures/pageFixtures'
-import { sign } from 'node:crypto';
 import { expect } from '@playwright/test';
 
 test.describe('End-to-end test suite', async() => {
-  const generatedUser = generateUsername();
-  const generatedPassword = generatePassword();
+  let generatedUser: string;
+  let generatedPassword: string;
 
   test.beforeEach(async({ signupPage })=>{
+    await test.step('Generate username and password', async() => {
+      generatedUser = generateUsername();
+      generatedPassword = generatePassword();
+    })
+
     await test.step('Load singup page',async() => {
       await signupPage.gotoSignupPage();
       await signupPage.makeKeyAssertionsForSignupPage();
@@ -27,7 +30,7 @@ test.describe('End-to-end test suite', async() => {
         await contactListPage.makeKeyAssertionsOfContactPage();
       });
 
-      await test.step('Head to the add contact page and verify', async() => {
+      await test.step('Head to the add contact page and make key assertions about the page', async() => {
         await contactListPage.gotoAddContactPage();
         await addContactPage.makeKeyAssertions();
       });
@@ -55,7 +58,7 @@ test.describe('End-to-end test suite', async() => {
         await contactListPage.assertTableContact(newContact, 0);
       });
 
-      await test.step('Logout and Login again, assert previously added contact', async() => {
+      await test.step('Logout and Login again, verify previously added contact is properly displayed', async() => {
         await contactListPage.logout();
         await loginPage.waitToLoad();
         await loginPage.makeKeyAssertionsLoginPage();
@@ -69,7 +72,8 @@ test.describe('End-to-end test suite', async() => {
   test('Unhappy path: signup with a first name bigger than 20 characters',
     async({ signupPage }) => {
       const bigName = 'NIKOSNIKOSNIKOSNIKOSNIKOSNIKOS'
-      await test.step('Fill text boxes except last name text box', async() => {
+      
+      await test.step(`Fill name text box with with ${bigName}`, async() => {
         await signupPage.performSignup({
           firstName: bigName,
           lastName: generatedUser,
@@ -98,7 +102,7 @@ test.describe('End-to-end test suite', async() => {
         await contactListPage.makeKeyAssertionsOfContactPage();
       });
 
-      await test.step('Head to the add contact page and verify', async() => {
+      await test.step('Head to the add contact page and verify page structure', async() => {
         await contactListPage.gotoAddContactPage();
         await addContactPage.makeKeyAssertions();
       });
