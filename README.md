@@ -121,3 +121,13 @@ Key Features:
 Parameters:
 
 length (number, optional) – Desired password length (minimum: 8, default: 8)
+
+
+
+.
+
+🔐 AuthState (Authentication State Manager)
+
+AuthState is a lightweight utility class responsible for storing and providing the authentication token used by API requests during test execution.
+
+It acts as a shared in-memory authentication state that allows multiple service classes to access the same authorization token without duplicating logic or passing tokens manually.
